@@ -4,12 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>测试打印</title>
+  <title>报名打印</title>
   <meta name="description" content="">
   <meta name="keywords" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="renderer" content="webkit">
   <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="stylesheet" href="/assets/exam/style.css">
 </head>
 <style type="text/css" media="screen">
     html,body,div,p,span,input,a{margin:0;padding:0;}i{font-style: normal;}
@@ -18,7 +19,20 @@
 </style>
 <body>
 <div class="am-g">
-    <img src="/assets/images/waiting.jpg" alt="">
+    <div id="print_div">
+        <div class="result"><p><span class="th">姓&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp名</span><span class="td">杨先生</span></p>
+        <p><span class="th">准考证号</span><span class="td">01230021</span></p><p><span class="th">身份证号</span><span class="td">320583199xxxxxxxxx</span></p>
+            <p><span class="th">成&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp绩</span><span class="td score"></span></p></div>
+    </div>
+    <button type="button" class="btn btn-primary btn-md btn-raised btn-block ink" id="btnPrint">打印</button>
 </div>
 </body>
 </html>
+<script src="/assets/js/jquery-2.2.3.min.js"></script>
+<script src="/assets/js/jquery.PrintArea.js"></script>
+<script>
+    $(function(){
+        $("#btnPrint").click(function(){ $("#print_div").printArea(); });
+    });
+
+</script>
