@@ -31,6 +31,7 @@ class Agency extends CI_Controller
     }
 
     public function index(){
+
         $this->display('agency/index.html');
     }
 

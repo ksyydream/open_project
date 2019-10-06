@@ -21,16 +21,7 @@ class Wx_index extends Wx_controller {
         //判断是否存在 wx_class 的session,如果存在就说明有登录状态
         //同时也要判断是否是 退出操作
         if($this->session->userdata('wx_class') && !in_array($this->uri->segment(2), $ignore_methods)){
-            //如果存在登录状态,又不是退出操作,就判断是哪种类型的用户,分别进入不同的控制器中
-            if($this->session->userdata('wx_class') == 'users' && $this->session->userdata('wx_user_id') > 0){
-                redirect('wx_users');
-                exit();
-            }
-            if($this->session->userdata('wx_class') == 'members' && $this->session->userdata('wx_m_id') > 0){
-                redirect('wx_members');
-                exit();
-            }
-            $this->logout();
+
 
         }
     }
