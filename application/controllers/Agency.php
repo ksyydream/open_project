@@ -32,7 +32,7 @@ class Agency extends CI_Controller
 
     public function index(){
 
-        $this->display('agency/index.html');
+        $this->display('agency/download.html');
     }
 
     public function sendSms(){
