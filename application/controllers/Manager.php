@@ -359,14 +359,28 @@ class Manager extends MY_Controller {
         $this->display('manager/exam/exam_user_list.html');
     }
 
-    public function exam_user_detail($id){
-        $data = $this->manager_model->exam_user_detail($id);
+    public function exam_user_add(){
+        $this->display('manager/exam/exam_user_detail.html');
+    }
+
+    public function exam_user_edit($id){
+        $data = $this->manager_model->exam_user_edit($id);
         if(!$data){
             $this->show_message('未找到准考证信息!');
         }
         $this->assign('data', $data);
-        $this->display('manager/log_list/exam_user_detail.html');
+        $this->display('manager/exam/exam_user_detail.html');
     }
+
+    public function exam_user_save() {
+        $res = $this->manager_model->exam_user_save($this->admin_id);
+        if($res['status'] == 1){
+            $this->show_message($res['msg'], site_url('/manager/exam_user_list'));
+        }else{
+            $this->show_message($res['msg']);
+        }
+    }
+
 
     public function upload_exam_user() {
         $rs = $this->manager_model->upload_exam_user($this->admin_id);

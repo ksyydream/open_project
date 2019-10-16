@@ -1,0 +1,171 @@
+{{include file='manager/public/head.html'}}
+<body class="no-skin">
+{{include file='manager/public/header.html'}}
+<div class="main-container" id="main-container">
+    <script type="text/javascript">
+        try {
+            ace.settings.check('main-container', 'fixed')
+        } catch (e) {
+        }
+    </script>
+    <style>
+        pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+    </style>
+    {{include file='manager/public/sidebar.html'}}
+    <div class="main-content">
+        <div class="main-content-inner">
+            <!-- #section:basics/content.breadcrumbs -->
+            {{include file='manager/public/breadcrumbs.html'}}
+
+            <!-- /section:basics/content.breadcrumbs -->
+            <div class="page-content">
+                {{include file='manager/public/set.html'}}
+
+                <!-- /section:settings.box -->
+                <div class="row">
+                    <div class="col-xs-12">
+                        <!-- PAGE CONTENT BEGINS -->
+                        <form id="save_form" class="form-horizontal" role="form" action="/manager/exam_user_save" method="post">
+                            <input type="hidden" name="exam_user_id" value="{{$data.id|default:''}}">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="name"> 考试姓名 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="name" name="name" required="required" class="rcol-xs-10 col-sm-5" value="{{$data.name|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="exam_ticket"> 准考证号 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="exam_ticket" id="exam_ticket" required="required" class="rcol-xs-10 col-sm-5" value="{{$data.exam_ticket|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="exam_path"> 考试地点 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="exam_path" id="exam_path" required="required" class="col-xs-10 col-sm-5" value="{{$data.exam_path|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="exam_room"> 考场 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="exam_room" id="exam_room" required="required" class="col-xs-10 col-sm-5" value="{{$data.exam_room|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="exam_seat"> 座位号 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="exam_seat" id="exam_seat" required="required" class="col-xs-10 col-sm-5" value="{{$data.exam_seat|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="exam_time"> 考试时间 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" name="exam_time" id="exam_time" required="required" class="col-xs-10 col-sm-5" value="{{$data.exam_time|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="status"> 是否启用 </label>
+                                <div class="control-label no-padding-left col-sm-1">
+                                    <label>
+                                        <input name="status" value="1" id="status" {{if $data.status|default:-1 == 1}}checked="checked"{{/if}}
+                                        class="ace ace-switch ace-switch-2" type="checkbox" />
+                                        <span class="lbl"></span>
+                                    </label>
+                                </div>
+                                <span class="help-inline col-xs-12 col-sm-7">
+												<span class="middle">YES，启用；NO，禁用</span>
+										</span>
+                            </div>
+
+                            <div class="col-md-offset-2 col-md-9">
+                                <button id="save_btn" class="btn btn-info" type="button">
+
+                                    <i class="icon-ok bigger-110"></i>
+
+                                    保存
+
+                                </button>
+                                &nbsp; &nbsp; &nbsp;
+                                <a href="javascript:history.go(-1)" class="btn" type="reset">
+
+                                    <i class="icon-undo bigger-110"></i>
+
+                                    返 回
+
+                                </a>
+                            </div>
+                        </form>
+                        <!-- PAGE CONTENT ENDS -->
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.page-content -->
+        </div>
+    </div><!-- /.main-content -->
+    {{include file='manager/public/footer.html'}}
+
+</div><!-- /.main-container -->
+
+{{include file='manager/public/footerjs.html'}}
+<!-- inline scripts related to this page -->
+<script src="/manager_statics/qwadmin/js/date-time/bootstrap-datepicker.js"></script>
+<script src="/manager_statics/app/ajaxfileupload.js"></script>
+<script type="text/javascript">
+    $("#save_btn").click(function(){
+        var name = $.trim($("#name").val());
+        if(name == "" ) {
+            layer.msg('考试姓名不能为空', {icon: 2});
+            return false;
+        }
+        var exam_ticket = $.trim($("#exam_ticket").val());
+        if(exam_ticket == "" ) {
+            layer.msg('准考证号不能为空', {icon: 2});
+            return false;
+        }
+        var exam_path = $.trim($("#exam_path").val());
+        if(exam_path == "" ) {
+            layer.msg('考试地点不能为空', {icon: 2});
+            return false;
+        }
+        var exam_room = $.trim($("#exam_room").val());
+        if(exam_room == "" ) {
+            layer.msg('考场不能为空', {icon: 2});
+            return false;
+        }
+        var exam_seat = $.trim($("#exam_seat").val());
+        if(exam_seat == "" ) {
+            layer.msg('走位号不能为空', {icon: 2});
+            return false;
+        }
+        var exam_time = $.trim($("#exam_time").val());
+        if(exam_time == "" ) {
+            layer.msg('考试时间不能为空', {icon: 2});
+            return false;
+        }
+        $("#save_form").submit();
+    })
+
+
+</script>
+</body>
+</html>

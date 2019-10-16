@@ -493,12 +493,11 @@ class Manager_model extends MY_Model
         return $data;
     }
 
-    //同盾数据详情
-    public function tongdun_info_detail($id){
-        $this->db->select('ti.*, us.rel_name us_rel_name_, us.mobile us_mobile_');
-        $this->db->from('tongdun_info ti');
-        $this->db->join('users us', 'ti.user_id = us.user_id', 'left');
-        $this->db->where('id', $id);
+    //准考证详情
+    public function exam_user_edit($id){
+        $this->db->select('eu.*');
+        $this->db->from('exam_user eu');
+        $this->db->where('eu.id', $id);
         $data = $this->db->get()->row_array();
         return $data;
     }
@@ -590,4 +589,41 @@ class Manager_model extends MY_Model
         }
         return '成功新增 ' . $insert_yes . ' 条!成功更新 ' . $update_yes . ' 条!失败 ' . $insert_err . ' 条!';
     }
+
+    public function exam_user_save($admin_id){
+        $data_insert = array(
+            'exam_ticket' => trim($this->input->post('exam_ticket')) ? trim($this->input->post('exam_ticket')) : null,
+            'name' => trim($this->input->post('name')) ? trim($this->input->post('name')) : null,
+            'exam_seat' => trim($this->input->post('exam_seat')) ? trim($this->input->post('exam_seat')) : null,
+            'exam_room' => trim($this->input->post('exam_room')) ? trim($this->input->post('exam_room')) : null,
+            'exam_time' => trim($this->input->post('exam_time')) ? trim($this->input->post('exam_time')) : null,
+            'exam_path' => trim($this->input->post('exam_path')) ? trim($this->input->post('exam_path')) : null,
+            'creater_time' => time(),
+            'modify_time' => time(),
+            'creater_admin_id' => $admin_id,
+            'modify_admin_id' => $admin_id,
+            'status' => trim($this->input->post('status')) ? trim($this->input->post('status')) : -1,
+        );
+        if(!$data_insert['exam_ticket'])
+            return $this->fun_fail('准考证号不能为空!');
+        $exam_user_id = trim($this->input->post('exam_user_id')) ? trim($this->input->post('exam_user_id')) : null;
+
+        if($exam_user_id){
+            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->where('id <>', $exam_user_id)->get()->row_array();
+            if($check_){
+                return $this->fun_fail('此准考证号已被使用!');
+            }
+            unset($data_insert['creater_time']);
+            unset($data_insert['creater_admin_id']);
+            $this->db->where('id', $exam_user_id)->update('exam_user', $data_insert);
+        }else{
+            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
+            if($check_){
+                return $this->fun_fail('此准考证号已被使用!');
+            }
+            $this->db->insert('exam_user', $data_insert);
+        }
+        return $this->fun_success('保存成功');
+    }
+
 }
