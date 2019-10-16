@@ -344,6 +344,32 @@ class Manager extends MY_Controller {
      *********************************************************************************************
      */
 
+    /**
+     * 准考证数据列表
+     * @author yangyang <yang.yang@thmarket.cn>
+     * @date 2019-07-23
+     */
+    public function exam_user_list($page = 1){
+        $data = $this->manager_model->exam_user_list($page, 1);
+        $base_url = "/manager/exam_user_list/";
+        $pager = $this->pagination->getPageLink4manager($base_url, $data['total_rows'], $data['limit']);
+        $this->assign('pager', $pager);
+        $this->assign('page', $page);
+        $this->assign('data', $data);
+        $this->display('manager/exam/exam_user_list.html');
+    }
 
+    public function exam_user_detail($id){
+        $data = $this->manager_model->exam_user_detail($id);
+        if(!$data){
+            $this->show_message('未找到准考证信息!');
+        }
+        $this->assign('data', $data);
+        $this->display('manager/log_list/exam_user_detail.html');
+    }
 
+    public function upload_exam_user() {
+        $rs = $this->manager_model->upload_exam_user($this->admin_id);
+        $this->show_message($rs, site_url('/manager/exam_user_list'));
+    }
 }

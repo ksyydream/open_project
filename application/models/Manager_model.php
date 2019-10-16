@@ -438,5 +438,156 @@ class Manager_model extends MY_Model
         return $this->fun_success('保存成功!');
     }
 
+    /**
+     *********************************************************************************************
+     * 以下代码为考试中心模块
+     *********************************************************************************************
+     */
 
+    /**
+     * 准考证数据列表
+     * @author yangyang <yang.yang@thmarket.cn>
+     * @date 2019-10-16
+     */
+
+    public function exam_user_list($page = 1){
+        $data['limit'] = $this->limit;//每页显示多少调数据
+        $data['keyword'] = trim($this->input->get('keyword')) ? trim($this->input->get('keyword')) : null;
+        $data['status'] = trim($this->input->get('status')) ? trim($this->input->get('status')) : null;
+
+        $this->db->select('count(1) num');
+        $this->db->from('exam_user eu');
+        if ($data['keyword']) {
+            $this->db->group_start();
+            $this->db->like('eu.name', $data['keyword']);
+            $this->db->or_like('eu.exam_ticket', $data['keyword']);
+            $this->db->or_like('eu.exam_path', $data['keyword']);
+            $this->db->group_end();
+        }
+
+        if ($data['status']) {
+            $this->db->where('eu.status', $data['status']);
+        }
+
+        $rs_total = $this->db->get()->row();
+        //总记录数
+        $total_rows = $rs_total->num;
+        $data['total_rows'] = $total_rows;
+        //list
+        $this->db->select('eu.*');
+        $this->db->from('exam_user eu');
+        if ($data['keyword']) {
+            $this->db->group_start();
+            $this->db->like('eu.name', $data['keyword']);
+            $this->db->or_like('eu.exam_ticket', $data['keyword']);
+            $this->db->or_like('eu.exam_path', $data['keyword']);
+            $this->db->group_end();
+        }
+
+        if ($data['status']) {
+            $this->db->where('eu.status', $data['status']);
+        }
+        $this->db->limit($data['limit'], $offset = ($page - 1) * $data['limit']);
+        $this->db->order_by('eu.exam_ticket', 'desc');
+        $data['res_list'] = $this->db->get()->result_array();
+        return $data;
+    }
+
+    //同盾数据详情
+    public function tongdun_info_detail($id){
+        $this->db->select('ti.*, us.rel_name us_rel_name_, us.mobile us_mobile_');
+        $this->db->from('tongdun_info ti');
+        $this->db->join('users us', 'ti.user_id = us.user_id', 'left');
+        $this->db->where('id', $id);
+        $data = $this->db->get()->row_array();
+        return $data;
+    }
+
+
+    /**
+     * 准考证 批量处理
+     * @author yangyang <yang.yang@thmarket.cn>
+     * @date 2019-10-16
+     */
+
+    public function upload_exam_user($admin_id) {
+        if (is_readable('./././upload') == false) {
+            mkdir('./././upload');
+        }
+        if (is_readable('./././upload/excel_upload') == false) {
+            mkdir('./././upload/excel_upload');
+        }
+        $change_row = 0;
+        $config['upload_path'] = "./upload/excel_upload";
+        $config['allowed_types'] = "*";
+        $config['encrypt_name'] = true;
+        $config['max_size'] = '200000';
+        //$config['encrypt_name']=true;
+        $this->load->library('upload', $config);
+        if (!$this->upload->do_upload('file')) {
+            die(var_dump($this->upload->display_errors()));
+        }
+        $data = $this->upload->data();
+        require_once(APPPATH . 'libraries/PHPExcel/PHPExcel.php');
+        require_once(APPPATH . 'libraries/PHPExcel/PHPExcel/IOFactory.php');
+        //die(APPPATH . 'libraries/PHPExcel/PHPExcel/IOFactory.php');
+        $uploadfile = './upload/excel_upload/' . $data['file_name'];//获取上传成功的Excel
+        if ($data['file_ext'] == ".xlsx") {
+            $objReader = PHPExcel_IOFactory::createReader('Excel2007');
+        } else {
+            $objReader = PHPExcel_IOFactory::createReader('Excel5');
+        }
+        //use excel2007 for 2007 format 注意 linux下需要大小写区分 填写Excel2007   //xlsx使用2007,其他使用Excel5
+        $objPHPExcel = $objReader->load($uploadfile);//加载目标Excel
+        // 处理企业信息
+        $sheet = $objPHPExcel->getSheet(0);//读取第一个sheet
+
+        $highestRow = $sheet->getHighestRow(); // 取得总行数
+        $letter = array(0, 1, 2, 3, 4, 5, 6, 7);
+        $tableheader = array('序号', '准考证号', '姓名', '座位号', '考场', '时间', '考试地点');
+        for ($i = 0; $i < count($tableheader); $i++) {
+            $record_hear_name = trim((string)$sheet->getCellByColumnAndRow($letter[$i], 1)->getValue());
+            if ($record_hear_name != $tableheader[$i]) {
+                return "第" . ($letter[$i] + 1) . "列不是 " . $tableheader[$i] . '!';
+            }
+        }
+
+        $insert_yes = 0;
+        $update_yes = 0;
+        $insert_err = 0;
+        for ($row = 2; $row <= $highestRow; $row++) {
+
+            $data_insert = array(
+                'exam_ticket' => trim((string)$sheet->getCellByColumnAndRow(1, $row)->getValue()),
+                'name' => trim((string)$sheet->getCellByColumnAndRow(2, $row)->getValue()),
+                'exam_seat' => trim((string)$sheet->getCellByColumnAndRow(3, $row)->getValue()),
+                'exam_room' => trim((string)$sheet->getCellByColumnAndRow(4, $row)->getValue()),
+                'exam_time' => trim((string)$sheet->getCellByColumnAndRow(5, $row)->getValue()),
+                'exam_path' => trim((string)$sheet->getCellByColumnAndRow(6, $row)->getValue()),
+                'creater_time' => time(),
+                'modify_time' => time(),
+                'creater_admin_id' => $admin_id,
+                'modify_admin_id' => $admin_id,
+                'status' => 1
+            );
+            if (!$data_insert['exam_ticket']) {
+                $insert_err++;
+                continue;
+            }
+            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
+            if ($check_) {
+                unset($data_insert['creater_time']);
+                unset($data_insert['creater_admin_id']);
+                unset($data_insert['status']);
+                $update_yes++;
+                $this->db->where('exam_ticket', $data_insert['exam_ticket'])->update('exam_user', $data_insert);
+            } else {
+                $insert_yes++;
+                $this->db->insert('exam_user', $data_insert);
+            }
+
+
+        }
+        return '成功新增 ' . $insert_yes . ' 条!成功更新 ' . $update_yes . ' 条!失败 ' . $insert_err . ' 条!';
+    }
 }
