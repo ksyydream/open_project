@@ -510,6 +510,10 @@ class Manager_model extends MY_Model
      */
 
     public function upload_exam_user($admin_id) {
+        //先查看是否有数据,如果数据库内有数据,不可导入
+        $row_ = $this->db->select()->from('exam_user')->get()->row_array();
+        if($row_)
+            return '列表存在数据,不可导入!';
         if (is_readable('./././upload') == false) {
             mkdir('./././upload');
         }
