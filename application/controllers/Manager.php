@@ -363,6 +363,16 @@ class Manager extends MY_Controller {
         $this->display('manager/exam/exam_user_detail.html');
     }
 
+    //清空 准考证 数据,不可恢复
+    public function exam_user_delete(){
+        $res = $this->manager_model->exam_user_delete($this->admin_id);
+        if($res['status'] == 1){
+            $this->show_message($res['msg'], site_url('/manager/exam_user_list'));
+        }else{
+            $this->show_message($res['msg']);
+        }
+    }
+
     public function exam_user_edit($id){
         $data = $this->manager_model->exam_user_edit($id);
         if(!$data){

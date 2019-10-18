@@ -43,6 +43,16 @@
                             <div class="space-4"></div>
 
                             <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="name"> 身份证号 </label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="code" name="code" required="required" class="rcol-xs-10 col-sm-5 js4IDcard" value="{{$data.code|default:''}}">
+                                    <span class="help-inline col-xs-12 col-sm-7"></span>
+                                </div>
+                            </div>
+
+                            <div class="space-4"></div>
+
+                            <div class="form-group">
                                 <label class="col-sm-2 control-label no-padding-right" for="exam_ticket"> 准考证号 </label>
                                 <div class="col-sm-9">
                                     <input type="text" name="exam_ticket" id="exam_ticket" required="required" class="rcol-xs-10 col-sm-5" value="{{$data.exam_ticket|default:''}}">
@@ -107,7 +117,7 @@
 
                                 </button>
                                 &nbsp; &nbsp; &nbsp;
-                                <a href="javascript:history.go(-1)" class="btn" type="reset">
+                                <a href="/manager/exam_user_list" class="btn" type="reset">
 
                                     <i class="icon-undo bigger-110"></i>
 
@@ -140,6 +150,15 @@
         var exam_ticket = $.trim($("#exam_ticket").val());
         if(exam_ticket == "" ) {
             layer.msg('准考证号不能为空', {icon: 2});
+            return false;
+        }
+        var code = $.trim($("#code").val());
+        if(code == "" ) {
+            layer.msg('身份证号不能为空', {icon: 2});
+            return false;
+        }
+        if(!IdentityCodeValid(code)){
+            layer.msg('身份证号填写不规范');
             return false;
         }
         var exam_path = $.trim($("#exam_path").val());

@@ -542,8 +542,8 @@ class Manager_model extends MY_Model
         $sheet = $objPHPExcel->getSheet(0);//读取第一个sheet
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        $letter = array(0, 1, 2, 3, 4, 5, 6, 7);
-        $tableheader = array('序号', '准考证号', '姓名', '座位号', '考场', '时间', '考试地点');
+        $letter = array(0, 1, 2, 3, 4, 5, 6, 7, 8);
+        $tableheader = array('序号', '准考证号', '姓名', '座位号', '考场', '时间', '考试地点', '身份证号');
         for ($i = 0; $i < count($tableheader); $i++) {
             $record_hear_name = trim((string)$sheet->getCellByColumnAndRow($letter[$i], 1)->getValue());
             if ($record_hear_name != $tableheader[$i]) {
@@ -563,23 +563,29 @@ class Manager_model extends MY_Model
                 'exam_room' => trim((string)$sheet->getCellByColumnAndRow(4, $row)->getValue()),
                 'exam_time' => trim((string)$sheet->getCellByColumnAndRow(5, $row)->getValue()),
                 'exam_path' => trim((string)$sheet->getCellByColumnAndRow(6, $row)->getValue()),
+                'code' => trim((string)$sheet->getCellByColumnAndRow(7, $row)->getValue()),
                 'creater_time' => time(),
                 'modify_time' => time(),
                 'creater_admin_id' => $admin_id,
                 'modify_admin_id' => $admin_id,
                 'status' => 1
             );
-            if (!$data_insert['exam_ticket']) {
+            if (!$data_insert['exam_ticket'] || !$data_insert['code']) {
                 $insert_err++;
                 continue;
             }
-            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
-            if ($check_) {
-                unset($data_insert['creater_time']);
-                unset($data_insert['creater_admin_id']);
-                unset($data_insert['status']);
-                $update_yes++;
-                $this->db->where('exam_ticket', $data_insert['exam_ticket'])->update('exam_user', $data_insert);
+            $check_ticket_ = $this->db->select('exam_ticket')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
+            $check_code_ = $this->db->select('code')->from('exam_user')->where('code', $data_insert['code'])->get()->row_array();
+            if ($check_ticket_ || $check_code_) {
+                if($check_ticket_)
+                    die('准考证号 ' . $check_ticket_['exam_ticket'] . '重复');
+                if($check_code_)
+                    die('身份证号 ' . $check_code_['code'] . '重复');
+                //unset($data_insert['creater_time']);
+                //unset($data_insert['creater_admin_id']);
+                //unset($data_insert['status']);
+                //$update_yes++;
+                //$this->db->where('exam_ticket', $data_insert['exam_ticket'])->update('exam_user', $data_insert);
             } else {
                 $insert_yes++;
                 $this->db->insert('exam_user', $data_insert);
@@ -587,7 +593,8 @@ class Manager_model extends MY_Model
 
 
         }
-        return '成功新增 ' . $insert_yes . ' 条!成功更新 ' . $update_yes . ' 条!失败 ' . $insert_err . ' 条!';
+        //return '成功新增 ' . $insert_yes . ' 条!成功更新 ' . $update_yes . ' 条!失败 ' . $insert_err . ' 条!';
+        return '成功新增 ' . $insert_yes . ' 条!失败 ' . $insert_err . ' 条!';
     }
 
     public function exam_user_save($admin_id){
@@ -598,6 +605,7 @@ class Manager_model extends MY_Model
             'exam_room' => trim($this->input->post('exam_room')) ? trim($this->input->post('exam_room')) : null,
             'exam_time' => trim($this->input->post('exam_time')) ? trim($this->input->post('exam_time')) : null,
             'exam_path' => trim($this->input->post('exam_path')) ? trim($this->input->post('exam_path')) : null,
+            'code' => trim($this->input->post('code')) ? trim($this->input->post('code')) : null,
             'creater_time' => time(),
             'modify_time' => time(),
             'creater_admin_id' => $admin_id,
@@ -606,24 +614,42 @@ class Manager_model extends MY_Model
         );
         if(!$data_insert['exam_ticket'])
             return $this->fun_fail('准考证号不能为空!');
+        if(!$data_insert['code'])
+            return $this->fun_fail('身份证号不能为空!');
+        if(!$data_insert['name'] || !$data_insert['exam_seat'] || !$data_insert['exam_room'] || !$data_insert['exam_time'] || !$data_insert['exam_path'])
+            return $this->fun_fail('信息不全!');
         $exam_user_id = trim($this->input->post('exam_user_id')) ? trim($this->input->post('exam_user_id')) : null;
 
         if($exam_user_id){
-            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->where('id <>', $exam_user_id)->get()->row_array();
-            if($check_){
+            $check_ticket_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->where('id <>', $exam_user_id)->get()->row_array();
+            if($check_ticket_){
                 return $this->fun_fail('此准考证号已被使用!');
+            }
+            $check_code_ = $this->db->select('')->from('exam_user')->where('code', $data_insert['code'])->where('id <>', $exam_user_id)->get()->row_array();
+            if($check_code_){
+                return $this->fun_fail('此身份证号已被使用!');
             }
             unset($data_insert['creater_time']);
             unset($data_insert['creater_admin_id']);
             $this->db->where('id', $exam_user_id)->update('exam_user', $data_insert);
         }else{
-            $check_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
-            if($check_){
+            $check_ticket_ = $this->db->select('')->from('exam_user')->where('exam_ticket', $data_insert['exam_ticket'])->get()->row_array();
+            if($check_ticket_){
                 return $this->fun_fail('此准考证号已被使用!');
+            }
+            $check_code_ = $this->db->select('')->from('exam_user')->where('code', $data_insert['code'])->get()->row_array();
+            if($check_code_){
+                return $this->fun_fail('此身份证号已被使用!');
             }
             $this->db->insert('exam_user', $data_insert);
         }
         return $this->fun_success('保存成功');
+    }
+
+    //清空 准考证 数据,不可恢复
+    public function exam_user_delete($admin_id){
+        $this->db->where('id >', 0)->delete('exam_user');
+        return $this->fun_success('清除成功!');
     }
 
 }
