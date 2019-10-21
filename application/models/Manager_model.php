@@ -574,6 +574,8 @@ class Manager_model extends MY_Model
                 'modify_admin_id' => $admin_id,
                 'status' => 1
             );
+            //默认头像地址是身份证号
+            $data_insert['head_img'] = $this->config->item('base_url') . 'upload/exam_user/' . $data_insert['code'] . '.jpg';
             if (!$data_insert['exam_ticket'] || !$data_insert['code']) {
                 $insert_err++;
                 continue;
@@ -610,6 +612,7 @@ class Manager_model extends MY_Model
             'exam_time' => trim($this->input->post('exam_time')) ? trim($this->input->post('exam_time')) : null,
             'exam_path' => trim($this->input->post('exam_path')) ? trim($this->input->post('exam_path')) : null,
             'code' => trim($this->input->post('code')) ? trim($this->input->post('code')) : null,
+            'head_img' => $this->input->post('head_img') ? $this->input->post('head_img') : null,
             'creater_time' => time(),
             'modify_time' => time(),
             'creater_admin_id' => $admin_id,

@@ -53,6 +53,35 @@ class Ajax_api extends CI_Controller {
      * @author yangyang <yang.yang@thmarket.cn>
      * @date 2018-3-31
      */
+    public function upload_exam_head(){
+        $admin_info = $this->session->userdata('admin_info');
+        if(!$admin_info){
+            echo -1;//如果没有登陆 不可上传,以免有人恶意上传图片占用服务器资源
+        }
+        $dir = FCPATH . '/upload/exam_user';
+        if(!is_dir($dir)){
+            mkdir($dir,0777,true);
+        }
+        $config['upload_path'] = './upload/exam_user/';
+        $config['allowed_types'] = 'gif|jpg|png|jpeg';
+        $config['encrypt_name'] = true;
+        $config['max_size'] = '3200';
+        $this->load->library('upload', $config);
+
+        if ( ! $this->upload->do_upload('userfile')){
+            echo 1;
+        }else{
+            $pic_arr = $this->upload->data();
+            echo $this->config->item('base_url') . 'upload/exam_user/' .$pic_arr['file_name'];
+        }
+    }
+
+
+    /**
+     * 上传头像
+     * @author yangyang <yang.yang@thmarket.cn>
+     * @date 2018-3-31
+     */
     public function get_car_city(){
         $province = $this->input->post('province');
         $res = $this->manager_model->get_car_city(trim($province));

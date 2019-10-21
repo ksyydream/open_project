@@ -39,7 +39,34 @@
                                     <span class="help-inline col-xs-12 col-sm-7"></span>
                                 </div>
                             </div>
+                            <div class="space-4"></div>
 
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label no-padding-right" for="form-field-4"> 头像 </label>
+                                <div class="col-sm-9">
+                                    <div class="col-xs-10 col-sm-5">
+                                        <img style="width: 200px" id="imgShow" {{if !empty($data) }} src="{{$data.head_img}}"{{else}}src="/manager_statics/images/touxiang.png"{{/if}}>
+                                        <input type="hidden" id="hidImgName" name="head_img" value="{{$data.head_img|default:''}}" />
+                                    </div>
+                                    <span class="help-inline col-xs-12 col-sm-7">
+											</span>
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-1 control-label no-padding-right"> </label>
+                                <div class="col-sm-9">
+                                    <div class="col-xs-10 col-sm-5">
+                                        <div>
+                                            <button type="button" class="btn btn-primary" id="btnUploadImg">上传头像</button>
+                                        </div>
+
+                                    </div>
+                                    <span class="help-inline col-xs-12 col-sm-7">
+												<span class="middle">仅支持jpg、gif、png、bmp、jpeg，且小于2MB。</span></span>
+                                </div>
+
+                            </div>
                             <div class="space-4"></div>
 
                             <div class="form-group">
@@ -141,6 +168,48 @@
 <script src="/manager_statics/qwadmin/js/date-time/bootstrap-datepicker.js"></script>
 <script src="/manager_statics/app/ajaxfileupload.js"></script>
 <script type="text/javascript">
+    window.onload = function() {
+        init();  //初始化
+
+    }
+    function init() {
+        //初始化图片上传
+        var btnImg = document.getElementById("btnUploadImg");
+        var img = document.getElementById("imgShow");
+        var hidImgName = document.getElementById("hidImgName");
+        g_AjxUploadImg(btnImg, img, hidImgName);
+    }
+
+
+    //图片上传
+    function g_AjxUploadImg(btn, img, hidPut) {
+        var button = btn, interval;
+        new AjaxUpload(button, {
+            action: "/ajax_api/upload_exam_head",
+            data: {},
+            name: 'userfile',
+            onSubmit: function(file, ext) {
+                if (!(ext && /^(jpg|JPG|png|PNG|gif|GIF)$/.test(ext))) {
+                    alert("您上传的图片格式不对，请重新选择！");
+                    return false;
+                }
+            },
+            onComplete: function(file, response) {
+                flagValue = response;
+                if (flagValue == "1") {
+                    alert("您上传的图片存在错误");
+                }
+                else {
+                    hidPut.value = response;
+                    img.src = response;
+
+                }
+            }
+        });
+    }
+
+
+
     $("#save_btn").click(function(){
         var name = $.trim($("#name").val());
         if(name == "" ) {
