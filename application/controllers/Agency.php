@@ -14,6 +14,7 @@ class Agency extends CI_Controller
     {
         parent::__construct();
         ini_set('date.timezone','Asia/Shanghai');
+        $this->load->model('map_model');
     }
 
     //重载smarty方法assign
@@ -26,13 +27,27 @@ class Agency extends CI_Controller
         $this->cismarty->display($html);
     }
 
-    public function inquiry(){
-        $this->display('agency/index.html');
+    public function download(){
+        $user_name = trim($this->input->post('username'));
+        $code = trim($this->input->post('userid'));
+        $data = $this->map_model->exam_download($user_name, $code);
+        if(!$data)
+            redirect(base_url('/agency/index'));
+        $this->assign('data', $data);
+        $this->display('agency/download.html');
     }
 
     public function index(){
 
-        $this->display('agency/download.html');
+        $this->display('agency/search.html');
+    }
+
+    public function check_user(){
+        $user_name = trim($this->input->post('username'));
+        $code = trim($this->input->post('userid'));
+        $res = $this->map_model->check_exam_user($user_name, $code);
+        echo json_encode($res);
+        die;
     }
 
     public function sendSms(){

@@ -146,4 +146,27 @@ class Map_model extends MY_Model
         $res['result'] = $data;
         return $res;
     }
+
+    public function check_exam_user($username, $code){
+        $data = $this->db->select()->from('exam_user')->where(array('name' => $username, 'code' => $code))->get()->row_array();
+        //die(var_dump($this->db->last_query()));
+        if(!$data){
+            return array('status' => -1, 'msg' => '考生不存在,请确认姓名与准考证是否填写正确!');
+        }
+        if($data['status'] <> 1){
+            return array('status' => -1, 'msg' => '考生准考证信息异常!');
+        }
+        return array('status' => 1, 'msg' => '获取成功');
+    }
+
+    public function exam_download($username, $code){
+        $data = $this->db->select()->from('exam_user')->where(array('name' => $username, 'code' => $code))->get()->row_array();
+        if(!$data){
+            return array();
+        }
+        if($data['status'] <> 1){
+            return array();
+        }
+        return $data;
+    }
 }
