@@ -28,8 +28,8 @@ class Agency extends CI_Controller
     }
 
     public function download(){
-        $user_name = trim($this->input->post('username'));
-        $code = trim($this->input->post('userid'));
+        $user_name = trim($this->input->get('username'));
+        $code = trim($this->input->get('userid'));
         $data = $this->map_model->exam_download($user_name, $code);
         if(!$data)
             redirect(base_url('/agency/index'));
@@ -43,8 +43,8 @@ class Agency extends CI_Controller
     }
 
     public function check_user(){
-        $user_name = trim($this->input->post('username'));
-        $code = trim($this->input->post('userid'));
+        $user_name = trim($this->input->get('username'));
+        $code = trim($this->input->get('userid'));
         $res = $this->map_model->check_exam_user($user_name, $code);
         echo json_encode($res);
         die;

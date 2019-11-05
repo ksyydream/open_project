@@ -29,7 +29,7 @@ body{background:#6975fe url(/assets/images/bg.jpg) no-repeat center top;}
 <body>
  <div class="main">
   <div class="innermain">
-    <form id="post_form" method="post" action="/agency/download" target="_blank">
+    <form id="post_form" method="get" action="/agency/download" target="_blank">
       <input type="text" id="name" name="username" maxlength="5" class="ip-txt" placeholder="请输入姓名">
       <input type="text" id="code" name="userid" class="ip-txt js4IDcard" placeholder="请输入身份证号码">
       <a href="javascript:;" id="post_btn" class="checkBtn">查 询</a>
@@ -57,7 +57,7 @@ body{background:#6975fe url(/assets/images/bg.jpg) no-repeat center top;}
                 //layer.msg('身份证号填写不规范', {icon: 2});
                 //return false;
             }
-            $.post('/agency/check_user',{username:name,userid:code},function(rs){
+            $.get('/agency/check_user',{username:name,userid:code},function(rs){
                 var data = JSON.parse(rs);
                 if(data.status == 1){
                     $("#post_form").submit();
