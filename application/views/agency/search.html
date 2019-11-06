@@ -57,15 +57,23 @@ body{background:#6975fe url(/assets/images/bg.jpg) no-repeat center top;}
                 //layer.msg('身份证号填写不规范', {icon: 2});
                 //return false;
             }
-            $.get('/agency/check_user',{username:name,userid:code},function(rs){
-                var data = JSON.parse(rs);
-                if(data.status == 1){
-                    $("#post_form").submit();
-                }else{
-                    layer.msg(data.msg, {icon: 2});
-                    return false;
+            $.ajax({
+                type: "GET",
+                url: "/agency/check_user",
+                async:false,
+                data: {username:name, userid:code},
+                dataType: "json",
+                success: function(data){
+                    //var data = JSON.parse(rs);
+                    if(data.status == 1){
+                        $("#post_form").submit();
+                    }else{
+                        layer.msg(data.msg, {icon: 2});
+                        return false;
+                    }
                 }
-            })
+            });
+
 
         });
     });
