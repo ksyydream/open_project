@@ -30,7 +30,7 @@ body{background:#6975fe url(/assets/images/bg.jpg) no-repeat center top;}
  <div class="main">
   <div class="innermain">
     <form id="post_form" method="get" action="/agency/download" target="_blank">
-      <input type="text" id="name" name="username" maxlength="5" class="ip-txt" placeholder="请输入姓名">
+      <!--<input type="text" id="name" name="username" maxlength="5" class="ip-txt" placeholder="请输入姓名">-->
       <input type="text" id="code" name="userid" class="ip-txt js4IDcard" placeholder="请输入身份证号码">
       <a href="javascript:;" id="post_btn" class="checkBtn">查 询</a>
     </form>
@@ -43,10 +43,10 @@ body{background:#6975fe url(/assets/images/bg.jpg) no-repeat center top;}
     $(function(){
         $("#post_btn").click(function(){
 
-            var name = $.trim($("#name").val());
+            var name = "";
             if(name == "" ) {
-                layer.msg('考试姓名不能为空', {icon: 2});
-                return false;
+                //layer.msg('考试姓名不能为空', {icon: 2});
+                //return false;
             }
             var code = $.trim($("#code").val());
             if(code == "" ) {
