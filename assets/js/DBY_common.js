@@ -50,6 +50,17 @@ $(function(){
         $(this).val($(this).val().toUpperCase());
     }).css("ime-mode", "disabled"); //CSS设置输入法不可用
 
+    $(".js4ABC_num").keyup(function () {
+        $(this).val($(this).val().replace(/[^0-9Xx]/g, ''));
+        $(this).val($(this).val().toUpperCase());
+    }).blur(function(){
+        $(this).val($(this).val().replace(/[^0-9Xx]/g, ''));
+        $(this).val($(this).val().toUpperCase());
+    }).bind("paste", function () {  //CTR+V事件处理
+        $(this).val($(this).val().replace(/[^0-9Xx]/g, ''));
+        $(this).val($(this).val().toUpperCase());
+    }).css("ime-mode", "disabled"); //CSS设置输入法不可用
+
     $(".js4float1").keyup(function () {
         $(this).val($(this).val().replace(/[^0-9.]/g, ''));
         $(this).val($(this).val().replace(/\.{2,}/g, "."));
