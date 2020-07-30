@@ -167,10 +167,15 @@ class Map_model extends MY_Model
         if($data['status'] <> 1){
             return array();
         }
-        $filesize = @getimagesize('/upload/exam_user/' . $data['code'] . '.png');
-        if($filesize){
-            $data['head_img'] = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".png";
+        if (function_exists('getimagesize')){
+            $filesize = @getimagesize('/upload/exam_user/' . $data['code'] . '.png');
+            if($filesize){
+                $data['head_img'] = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".png";
+            }
+        }else{
+            die(123);
         }
+
         return $data;
     }
 }
