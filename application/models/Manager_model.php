@@ -546,8 +546,8 @@ class Manager_model extends MY_Model
         $sheet = $objPHPExcel->getSheet(0);//读取第一个sheet
 
         $highestRow = $sheet->getHighestRow(); // 取得总行数
-        $letter = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9 ,10);
-        $tableheader = array('序号', '准考证号', '姓名', '手机号', '身份证号', '性别', '公司', '考场', '座位号', '时间', '考试地点');
+        $letter = array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        $tableheader = array('序号', '准考证号', '姓名', '手机号', '身份证号', '执业公司', '考试场地', '座位号', '考试时间', '考试地点');
         for ($i = 0; $i < count($tableheader); $i++) {
             $record_hear_name = trim((string)$sheet->getCellByColumnAndRow($letter[$i], 1)->getValue());
             if ($record_hear_name != $tableheader[$i]) {
@@ -564,13 +564,13 @@ class Manager_model extends MY_Model
                 'exam_ticket' => trim((string)$sheet->getCellByColumnAndRow(1, $row)->getValue()),
                 'name' => trim((string)$sheet->getCellByColumnAndRow(2, $row)->getValue()),
                 'phone' => trim((string)$sheet->getCellByColumnAndRow(3, $row)->getValue()),
-                'exam_seat' => trim((string)$sheet->getCellByColumnAndRow(8, $row)->getValue()),
-                'exam_room' => trim((string)$sheet->getCellByColumnAndRow(7, $row)->getValue()),
-                'exam_time' => trim((string)$sheet->getCellByColumnAndRow(9, $row)->getValue()),
-                'exam_path' => trim((string)$sheet->getCellByColumnAndRow(10, $row)->getValue()),
+                'exam_seat' => trim((string)$sheet->getCellByColumnAndRow(7, $row)->getValue()),
+                'exam_room' => trim((string)$sheet->getCellByColumnAndRow(6, $row)->getValue()),
+                'exam_time' => trim((string)$sheet->getCellByColumnAndRow(8, $row)->getValue()),
+                'exam_path' => trim((string)$sheet->getCellByColumnAndRow(9, $row)->getValue()),
                 'code' => trim((string)$sheet->getCellByColumnAndRow(4, $row)->getValue()),
-                'sex' => trim((string)$sheet->getCellByColumnAndRow(5, $row)->getValue()),
-                'company' => trim((string)$sheet->getCellByColumnAndRow(6, $row)->getValue()),
+                //'sex' => trim((string)$sheet->getCellByColumnAndRow(5, $row)->getValue()),
+                'company' => trim((string)$sheet->getCellByColumnAndRow(5, $row)->getValue()),
                 'creater_time' => time(),
                 'modify_time' => time(),
                 'creater_admin_id' => $admin_id,
