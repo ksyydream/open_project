@@ -173,6 +173,11 @@ class Map_model extends MY_Model
             if($filesize){
                 $data['head_img'] = $img_;
             }
+            $img2_ = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".jpeg";
+            $filesize2 = @getimagesize($img2_);
+            if($filesize2){
+                $data['head_img'] = $img2_;
+            }
         }
 
         return $data;
