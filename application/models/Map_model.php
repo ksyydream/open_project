@@ -167,16 +167,35 @@ class Map_model extends MY_Model
         if($data['status'] <> 1){
             return array();
         }
-        if (function_exists('getimagesize')){
+        if (@function_exists('getimagesize')){
+            $flag_ = false;
             $img_ = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".png";
             $filesize = @getimagesize($img_);
             if($filesize){
                 $data['head_img'] = $img_;
+                $flag_ = true;
+            }
+            $img_ = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".jpg";
+            $filesize = @getimagesize($img_);
+            if($filesize){
+                $data['head_img'] = $img_;
+                $flag_ = true;
             }
             $img2_ = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".jpeg";
             $filesize2 = @getimagesize($img2_);
             if($filesize2){
                 $data['head_img'] = $img2_;
+                $flag_ = true;
+            }
+
+            if(!$flag_){
+                if(file_exists('./upload/exam_user/510922200211046804.JPG')){
+                    $data['head_img'] = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".JPG";
+                }elseif(file_exists('./upload/exam_user/510922200211046804.PNG')){
+                    $data['head_img'] = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".PNG";
+                }elseif(file_exists('./upload/exam_user/510922200211046804.JPEG')){
+                    $data['head_img'] = "http://open.ksls.com.cn/upload/exam_user/". $data['code'] . ".JPEG";
+                }
             }
         }
 
