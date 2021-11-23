@@ -160,6 +160,7 @@ class Map_model extends MY_Model
     }
 
     public function exam_download($code){
+
         $data = $this->db->select()->from('exam_user')->where(array('code' => $code))->get()->row_array();
         if(!$data){
             return array();
